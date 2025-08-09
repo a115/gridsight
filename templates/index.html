@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Hub | A115 GridSight{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-5">GridSight Dashboards</h1>
+        <p class="lead text-muted">Select a view to begin your analysis.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 text-center shadow-sm feature-card">
+                <div class="card-body d-flex flex-column">
+                    <div class="feature-icon text-primary mb-3">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h5 class="card-title">Historical Volatility Analyser</h5>
+                    <p class="card-text text-muted">Analyse historical grid data to find correlations between renewables, demand, and pricing.</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary disabled" aria-disabled="true">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 text-center shadow-sm feature-card">
+                <div class="card-body d-flex flex-column">
+                    <div class="feature-icon text-success mb-3">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h5 class="card-title">System Headroom View</h5>
+                    <p class="card-text text-muted">Get a macro view of grid tightness by analysing the spare capacity of the entire CCGT fleet.</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary disabled" aria-disabled="true">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 text-center shadow-sm feature-card">
+                <div class="card-body d-flex flex-column">
+                    <div class="feature-icon text-warning mb-3">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </div>
+                    <h5 class="card-title">Live Plant Status Board</h5>
+                    <p class="card-text text-muted">A real-time "bingo board" showing the operational status of every major UK power plant.</p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary disabled" aria-disabled="true">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

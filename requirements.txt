@@ -1,0 +1,9 @@
+psycopg2-binary
+django
+django-extensions
+django-timescaledb
+celery
+redis
+django-environ
+requests
+pandas
