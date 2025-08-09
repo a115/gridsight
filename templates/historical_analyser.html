@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Historical Analyser | A115 GridSight{% endblock %}
+
+{% block nav_title %}Historical Volatility Analyser{% endblock %}
+
+{% block content %}
+<!-- Control Panel -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-funnel-fill me-2"></i>Correlation Filter
+        </h5>
+        {% comment %}
+        <span class="pro-badge rounded-pill">PRO FEATURE</span>
+        {% endcomment %}
+    </div>
+    <div class="card-body">
+        <p class="card-text text-muted">Instantly analyse historical grid conditions. Find all days that match your specific criteria to uncover hidden patterns in price and generation.</p>
+        <div class="row g-3 align-items-end">
+            <!-- Date Range Filter -->
+            <div class="col-lg-3 col-md-6">
+                <label for="dateStart" class="form-label fw-semibold">Date Range</label>
+                <div class="input-group">
+                    <input type="date" class="form-control" id="dateStart" value="2025-07-01">
+                    <input type="date" class="form-control" id="dateEnd" value="2025-07-31">
+                </div>
+            </div>
+
+            <!-- Wind Generation Filter -->
+            <div class="col-lg-3 col-md-6">
+                <label for="windValue" class="form-label fw-semibold">Avg. Wind Generation (MW)</label>
+                <div class="input-group">
+                    <select class="form-select" id="windOperator" style="max-width: 70px;">
+                        <option>&lt;</option>
+                        <option>&gt;</option>
+                        <option>=</option>
+                    </select>
+                    <input type="number" class="form-control" id="windValue" placeholder="e.g., 5000">
+                </div>
+            </div>
+
+            <!-- Peak Demand Filter -->
+            <div class="col-lg-3 col-md-6">
+                <label for="demandValue" class="form-label fw-semibold">Peak Demand (MW)</label>
+                <div class="input-group">
+                    <select class="form-select" id="demandOperator" style="max-width: 70px;">
+                        <option>&gt;</option>
+                        <option>&lt;</option>
+                        <option>=</option>
+                    </select>
+                    <input type="number" class="form-control" id="demandValue" placeholder="e.g., 38000">
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-lg-3 col-md-6 d-flex">
+                <button class="btn btn-primary w-100 me-2" id="applyFiltersBtn">
+                    <i class="bi bi-search me-1"></i> Apply
+                </button>
+                <button class="btn btn-outline-secondary" id="resetBtn" title="Reset Filters">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Charts -->
+<div class="row g-4">
+    <!-- Chart 1: Generation -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title text-muted">Renewable vs. Thermal Generation</h6>
+                <div class="flex-grow-1" style="min-height: 300px;">
+                    <canvas id="generationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 2: Imbalance Price -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title text-muted">System Imbalance Price (£/MWh)</h6>
+                <div class="flex-grow-1" style="min-height: 300px;">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 3: Spark Spread -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title text-muted">Indicative Spark Spread (£/MWh)</h6>
+                <div class="flex-grow-1" style="min-height: 300px;">
+                     <canvas id="spreadChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 4: Fuel Mix -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title text-muted">Average Generation Mix (Filtered Period)</h6>
+                <div class="flex-grow-1 d-flex align-items-center justify-content-center" style="min-height: 300px;">
+                     <canvas id="mixChart" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+    {{ chart_data|json_script:"chart-data" }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const data = JSON.parse(document.getElementById('chart-data').textContent);
+
+            // --- CHART 1: GENERATION ---
+            const genCtx = document.getElementById('generationChart').getContext('2d');
+            const generationChart = new Chart(genCtx, {
+                type: 'line',
+                data: data.generation,
+                options: {
+                    ...defaultChartOptions,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'MW' }
+                        }
+                    }
+                }
+            });
+
+            // --- CHART 2: PRICE ---
+            const priceCtx = document.getElementById('priceChart').getContext('2d');
+            const priceChart = new Chart(priceCtx, {
+                type: 'line',
+                data: data.price,
+                options: defaultChartOptions
+            });
+
+            // --- CHART 3: SPREAD ---
+            const spreadCtx = document.getElementById('spreadChart').getContext('2d');
+            const spreadChart = new Chart(spreadCtx, {
+                type: 'bar',
+                data: data.spread,
+                options: {
+                    ...defaultChartOptions,
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        legend: { display: false } // Hide legend for single dataset
+                    },
+                    scales: {
+                        ...defaultChartOptions.scales,
+                        y: {
+                            ...defaultChartOptions.scales.y,
+                            beginAtZero: false // Allow negative values to be clear
+                        }
+                    }
+                }
+            });
+
+            // --- CHART 4: MIX ---
+            const mixCtx = document.getElementById('mixChart').getContext('2d');
+            const mixChart = new Chart(mixCtx, {
+                type: 'doughnut',
+                data: data.mix,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
