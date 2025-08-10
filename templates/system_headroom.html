@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}System Headroom | A115 GridSight{% endblock %}
+
+{% block nav_title %}System Headroom View{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-stack me-2"></i>UK CCGT Fleet - Headroom Analysis
+        </h5>
+        {% comment %}
+        <span class="pro-badge rounded-pill">PRO FEATURE</span>
+        {% endcomment %}
+    </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <!-- Main Chart -->
+            <div class="col-lg-9">
+                <p class="text-muted">
+                    This view shows the real-time tension on the grid by comparing the maximum possible generation (MEL) against planned generation (FPN) and actual output for the entire gas-fired (CCGT) fleet. The shaded areas represent available spare capacity ("Headroom") and real-time balancing actions.
+                </p>
+                <div style="height: 450px;">
+                    <canvas id="headroomChart"></canvas>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="col-lg-3">
+                <h6 class="text-muted text-center mb-3">Key Metrics (Today)</h6>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="card kpi-card text-center h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Lowest Headroom</h5>
+                                <div>
+                                    <span class="kpi-value text-danger">850</span>
+                                    <span class="kpi-unit">MW</span>
+                                </div>
+                                <p class="mb-0 text-muted small">at 18:30</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card kpi-card text-center h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Peak Balancing Action</h5>
+                                <div>
+                                    <span class="kpi-value text-success">+500</span>
+                                    <span class="kpi-unit">MW</span>
+                                </div>
+                                <p class="mb-0 text-muted small">(Actual vs. Plan at 19:00)</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col-12">
+                        <div class="card kpi-card text-center h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Current Availability</h5>
+                                <div>
+                                    <span class="kpi-value text-primary">92</span>
+                                    <span class="kpi-unit">%</span>
+                                </div>
+                                <p class="mb-0 text-muted small">(MEL vs. Max Capacity)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+    {{ chart_data|json_script:"headroom-chart-data" }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartData = JSON.parse(document.getElementById('headroom-chart-data').textContent);
+
+            const headroomCtx = document.getElementById('headroomChart').getContext('2d');
+            const headroomChart = new Chart(headroomCtx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    ...defaultChartOptions,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        tooltip: {
+                            boxPadding: 5,
+                            callbacks: {
+                                footer: function(tooltipItems) {
+                                    let mel = 0;
+                                    let fpn = 0;
+                                    tooltipItems.forEach(function(tooltipItem) {
+                                        if (tooltipItem.dataset.label === 'Max Export Limit (MEL)') {
+                                            mel = tooltipItem.raw;
+                                        }
+                                        if (tooltipItem.dataset.label === 'Planned Generation (FPN)') {
+                                            fpn = tooltipItem.raw;
+                                        }
+                                    });
+                                    const headroom = mel - fpn;
+                                    return 'Headroom: ' + headroom.toLocaleString() + ' MW';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }
+                        },
+                        y: {
+                            grid: { color: '#e9ecef' },
+                            beginAtZero: false,
+                            min: 15000,
+                            title: {
+                                display: true,
+                                text: 'Megawatts (MW)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
