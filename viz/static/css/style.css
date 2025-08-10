@@ -1,0 +1,88 @@
+body {
+    background-color: #f8f9fa;
+}
+
+/* --- Badge Styles --- */
+.pro-badge {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.3em 0.7em;
+    color: var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+    border: 1px solid var(--bs-primary-border-subtle);
+}
+
+/* --- KPI Card Styles --- */
+.kpi-card .card-title {
+    font-size: 1rem;
+    color: #6c757d;
+}
+.kpi-card .kpi-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #212529;
+}
+.kpi-card .kpi-unit {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #495057;
+    margin-left: 0.25rem;
+}
+
+/* --- Plant Status Tile Styles --- */
+.plant-tile {
+    border-left-width: 5px;
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.plant-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.10)!important;
+}
+.plant-name {
+    font-weight: 700;
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+.plant-status {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+.generation-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+.generation-plan {
+    font-size: 1rem;
+    color: #6c757d;
+}
+.mel-value {
+    font-size: 0.85rem;
+}
+
+/* Status Colors */
+.status-generating { border-left-color: var(--bs-primary); }
+.status-generating .plant-status { color: var(--bs-primary); }
+.status-standby { border-left-color: var(--bs-success); }
+.status-standby .plant-status { color: var(--bs-success); }
+.status-standby .generation-value { color: #6c757d; }
+.status-balancing { border-left-color: var(--bs-warning); }
+.status-balancing .plant-status { color: var(--bs-warning); }
+.status-outage { border-left-color: var(--bs-secondary); background-color: #f8f9fa; }
+.status-outage .plant-status { color: var(--bs-secondary); }
+.status-outage .plant-name, .status-outage .generation-value, .status-outage .generation-plan, .status-outage .mel-value { color: #adb5bd; }
+.status-trip { border-left-color: var(--bs-danger); background-color: var(--bs-danger-bg-subtle); }
+.status-trip .plant-status { color: var(--bs-danger); }
+
+/* --- Index Page Card Styles --- */
+.feature-card .feature-icon {
+    font-size: 3rem;
+    line-height: 1;
+}
+.feature-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
