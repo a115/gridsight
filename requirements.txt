@@ -5,5 +5,8 @@ django-timescaledb
 celery
 redis
 django-environ
+dj-database-url
 requests
 pandas
+gunicorn
+
