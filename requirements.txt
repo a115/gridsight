@@ -9,4 +9,4 @@ dj-database-url
 requests
 pandas
 gunicorn
-
+whitenoise[brotli]
