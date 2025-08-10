@@ -24,4 +24,5 @@ urlpatterns = [
     path('', views.index, name='index'),  # Main index/hub page
     path('analyser/', views.historical_analyser_view, name='historical_analyser'),
     path('headroom/', views.system_headroom_view, name='system_headroom'),
+    path('status-board/', views.plant_status_board_view, name='plant_status_board'),
 ]
