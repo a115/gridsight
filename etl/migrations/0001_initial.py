@@ -6,43 +6,103 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Metric',
+            name="Metric",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('code', models.CharField(help_text='Internal code, e.g., B1610_WIND', max_length=50, unique=True)),
-                ('default_units', models.CharField(help_text='e.g., MW, £/MWh, p/th', max_length=20)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                (
+                    "code",
+                    models.CharField(
+                        help_text="Internal code, e.g., B1610_WIND",
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "default_units",
+                    models.CharField(help_text="e.g., MW, £/MWh, p/th", max_length=20),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Plant',
+            name="Plant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('eic_code', models.CharField(help_text='Unique EIC code for the plant/unit', max_length=50, unique=True)),
-                ('fuel_type', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "eic_code",
+                    models.CharField(
+                        help_text="Unique EIC code for the plant/unit",
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                ("fuel_type", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='TimeSeriesData',
+            name="TimeSeriesData",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('time', timescale.db.models.fields.TimescaleDateTimeField(interval='7 days')),
-                ('value', models.FloatField()),
-                ('metric', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='data_points', to='etl.metric')),
-                ('plant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='data_points', to='etl.plant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "time",
+                    timescale.db.models.fields.TimescaleDateTimeField(
+                        interval="7 days"
+                    ),
+                ),
+                ("value", models.FloatField()),
+                (
+                    "metric",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="data_points",
+                        to="etl.metric",
+                    ),
+                ),
+                (
+                    "plant",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="data_points",
+                        to="etl.plant",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-time', 'metric'],
-                'unique_together': {('time', 'metric', 'plant')},
+                "ordering": ["-time", "metric"],
+                "unique_together": {("time", "metric", "plant")},
             },
         ),
     ]
