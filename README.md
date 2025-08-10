@@ -20,3 +20,56 @@ It consists of two core, complementary views: a Live Plant Status Board that ans
   4. System Headroom View: A macro-level chart that aggregates MEL and FPN data for the entire CCGT fleet, providing a clear, time-series view of the total spare capacity (headroom) available on the grid.
 
 
+## Getting Started
+
+This guide will walk you through setting up the GridSight project for local development.
+
+### Prerequisites
+
+* **Python 3.12**
+* **PostgreSQL 16** (or later).
+* The **TimescaleDB extension** must be installed and enabled on your PostgreSQL instance.
+
+### Setup Instructions
+
+1.  **Clone the repository:**
+    ```bash
+    git clone git@github.com:a115/gridsight.git
+    cd gridsight
+    ```
+
+2.  **Create a virtual environment, activte it and install dependencies:**
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    pip install -r requirements-dev.txt
+    ```
+
+3.  **Configure your environment:**
+    Create a `.env` file in the project root by copying the example file. This will store your database credentials and other secrets / env vars.
+    ```
+    POSTGRES_PASSWORD=YOUR_PASSWORD
+    DJANGO_SECRET_KEY=your-secret-key-here
+    DJANGO_DEBUG=True
+    ```
+
+5.  **Run database migrations and collect static files:**
+    This will create all the necessary tables in your database, including the TimescaleDB hypertables.
+    ```bash
+    python manage.py migrate
+    python manage.py collectstatic
+    ```
+
+6.  **Run the development server:**
+    ```bash
+    python manage.py runserver
+    ```
+    The application should now be running at `http://127.0.0.1:8000/`.
+
+7.  **Fetch initial data (Optional but Recommended):**
+    To populate your local database with some sample data, you can use the custom management command.
+    ```bash
+    # TODO
+    ```
+
