@@ -31,6 +31,8 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 8000
 
+RUN DJANGO_SECRET_KEY="dummy-key-for-collectstatic" python manage.py collectstatic --noinput
+
 # The command to run the application
 # We use gunicorn for production instead of Django's development server
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "app.wsgi"]

@@ -25,7 +25,10 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "gridsight.a115.co.uk",
+    "gridsight-f9f8.onrender.com",
+]
 
 
 # Application definition
@@ -85,7 +88,7 @@ DATABASES = {
         "ENGINE": "timescale.db.backends.postgresql",
         "NAME": os.environ.get("POSTGRES_DB", "gridsight"),
         "USER": os.environ.get("POSTGRES_USER", "nobody"),
-        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
