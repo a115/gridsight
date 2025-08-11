@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party
     "timescale.db",
+    "django_extensions",
     # Ours
     "core",
     "etl",
@@ -140,3 +141,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# API Keys and other sensitive settings
+BMRS_API_KEY = os.environ.get("BMRS_API_KEY")
