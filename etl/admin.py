@@ -18,9 +18,16 @@ class PlantAdmin(admin.ModelAdmin):
     Admin configuration for the Plant model.
     """
 
-    list_display = ("name", "eic_code", "fuel_type")
-    search_fields = ("name", "eic_code")
-    list_filter = ("fuel_type",)
+    list_display = (
+        "name",
+        "eic_code",
+        "fuel_type",
+        "generation_capacity",
+        "bm_unit_type",
+        "lead_party_name",
+    )
+    search_fields = ("name", "eic_code", "lead_party_name")
+    list_filter = ("fuel_type", "bm_unit_type")
 
 
 @admin.register(TimeSeriesData)

@@ -67,12 +67,16 @@ class TimeSeriesData(TimescaleModel):
         plant_name = f" ({self.plant.name})" if self.plant else ""
         return f"{self.metric.name}{plant_name} at {self.time}: {self.value} {self.metric.default_units}"
 
+
 class BidOfferAcceptance(models.Model):
     """
     Stores data for a specific Bid-Offer Acceptance from the BOALF report.
     This is not a time-series model, but a record of a specific event.
     """
-    plant = models.ForeignKey(Plant, on_delete=models.CASCADE, related_name='acceptances')
+
+    plant = models.ForeignKey(
+        Plant, on_delete=models.CASCADE, related_name="acceptances"
+    )
     acceptance_number = models.IntegerField(unique=True)
     acceptance_time = models.DateTimeField()
     start_time = models.DateTimeField()
@@ -80,10 +84,12 @@ class BidOfferAcceptance(models.Model):
     volume = models.FloatField(help_text="The accepted volume in MW")
     # In the real API, there is no price field in the BOALF dataset.
     # This would need to be cross-referenced from the Bid-Offer endpoint if required.
-    price = models.FloatField(null=True, blank=True, help_text="The accepted price in £/MWh")
+    price = models.FloatField(
+        null=True, blank=True, help_text="The accepted price in £/MWh"
+    )
 
     class Meta:
-        ordering = ['-start_time']
+        ordering = ["-start_time"]
 
     def __str__(self):
         return f"Acceptance {self.acceptance_number} for {self.plant.name} at {self.start_time}"

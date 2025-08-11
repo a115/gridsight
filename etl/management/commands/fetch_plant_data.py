@@ -4,30 +4,38 @@ from etl.services import BMRSDataService
 
 
 class Command(BaseCommand):
-    help = 'Manually fetches data from the BMRS API.'
+    help = "Manually fetches data from the BMRS API."
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'source',
+            "source",
             type=str,
-            help='Specify the data source to fetch: "latest_snapshot" or "plant_reference"'
+            help='Specify the data source to fetch: "latest_snapshot" or "plant_reference"',
         )
 
     def handle(self, *args, **options):
-        source = options['source']
+        source = options["source"]
         service = BMRSDataService()
-        
-        if source == 'latest_snapshot':
+
+        if source == "latest_snapshot":
             self.stdout.write("Starting manual fetch of latest plant data (MEL/FPN)...")
             result = service.get_latest_plant_data()
-        elif source == 'plant_reference':
-            self.stdout.write("Starting manual fetch of plant reference data (fuel types, etc.)...")
+        elif source == "plant_reference":
+            self.stdout.write(
+                "Starting manual fetch of plant reference data (fuel types, etc.)..."
+            )
             result = service.update_plant_reference_data()
         else:
-            self.stdout.write(self.style.ERROR(f'Unknown source: {source}. Use "latest_snapshot" or "plant_reference".'))
+            self.stdout.write(
+                self.style.ERROR(
+                    f'Unknown source: {source}. Use "latest_snapshot" or "plant_reference".'
+                )
+            )
             return
 
         if result:
             self.stdout.write(self.style.SUCCESS(f"Fetch complete. {result}"))
         else:
-            self.stdout.write(self.style.ERROR("Data fetch failed. Check logs for details."))
+            self.stdout.write(
+                self.style.ERROR("Data fetch failed. Check logs for details.")
+            )

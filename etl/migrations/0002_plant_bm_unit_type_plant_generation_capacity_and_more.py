@@ -5,41 +5,60 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('etl', '0001_initial'),
+        ("etl", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='plant',
-            name='bm_unit_type',
+            model_name="plant",
+            name="bm_unit_type",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
         migrations.AddField(
-            model_name='plant',
-            name='generation_capacity',
+            model_name="plant",
+            name="generation_capacity",
             field=models.FloatField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='plant',
-            name='lead_party_name',
+            model_name="plant",
+            name="lead_party_name",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.CreateModel(
-            name='BidOfferAcceptance',
+            name="BidOfferAcceptance",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('acceptance_number', models.IntegerField(unique=True)),
-                ('acceptance_time', models.DateTimeField()),
-                ('start_time', models.DateTimeField()),
-                ('end_time', models.DateTimeField()),
-                ('volume', models.FloatField(help_text='The accepted volume in MW')),
-                ('price', models.FloatField(blank=True, help_text='The accepted price in £/MWh', null=True)),
-                ('plant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='acceptances', to='etl.plant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("acceptance_number", models.IntegerField(unique=True)),
+                ("acceptance_time", models.DateTimeField()),
+                ("start_time", models.DateTimeField()),
+                ("end_time", models.DateTimeField()),
+                ("volume", models.FloatField(help_text="The accepted volume in MW")),
+                (
+                    "price",
+                    models.FloatField(
+                        blank=True, help_text="The accepted price in £/MWh", null=True
+                    ),
+                ),
+                (
+                    "plant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="acceptances",
+                        to="etl.plant",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-start_time'],
+                "ordering": ["-start_time"],
             },
         ),
     ]

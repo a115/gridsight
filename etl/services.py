@@ -139,6 +139,9 @@ class BMRSDataService:
                 defaults={
                     "name": plant_info.get("bmUnitName", "UNKNOWN") or "UNKNOWN",
                     "fuel_type": plant_info.get("fuelType", "UNKNOWN") or "UNKNOWN",
+                    "generation_capacity": plant_info.get("generationCapacity"),
+                    "bm_unit_type": plant_info.get("bmUnitType"),
+                    "lead_party_name": plant_info.get("leadPartyName"),
                 },
             )
             if created:
