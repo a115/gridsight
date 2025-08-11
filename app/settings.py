@@ -32,6 +32,12 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://gridsight.a115.co.uk",
+    "https://gridsight-f9f8.onrender.com",
+    "http://localhost:8000",
+]
+
 
 # Application definition
 
