@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from django.shortcuts import render
 
 
@@ -115,10 +116,12 @@ def plant_status_board_view(request):
             "start_time": "19:00",
         },
     ]
+    current_datetime = datetime.now(timezone.utc)
     context = {
         "plants": plants_data,
         "search_query": search_query,
         "fuel_filter": fuel_filter,
         "sort_filter": sort_filter,
+        "last_refreshed": current_datetime,
     }
     return render(request, "plant_status_board.html", context)

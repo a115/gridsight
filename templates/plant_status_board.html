@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tz %}
 
 {% block title %}Plant Status Board | A115 GridSight{% endblock %}
 
@@ -29,7 +30,13 @@
 
 {% block content %}
 <div class="mb-4">
-    <p class="lead text-muted">This board provides a real-time view of every major power generation unit on the UK grid. Each tile represents a single plant, showing its planned output (FPN) versus its maximum capability (MEL) and its current operational status.</p>
+    <p class="lead text-muted">
+        {% get_current_timezone as TIME_ZONE %}
+        This board provides a real-time view of every major power generation unit on the UK grid. Each tile represents a single plant, showing its planned output (FPN) versus its maximum capability (MEL) and its current operational status.
+        Last refreshed at: <span class="text-muted">
+            {{ last_refreshed|localtime|date:"H:i:s" }} ({{ TIME_ZONE }})
+        </span>.
+    </p>
 </div>
 <!-- Control Panel -->
 <div class="card shadow-sm mb-4">
@@ -51,7 +58,6 @@
                 <label class="btn btn-outline-primary" for="btnWind">Wind</label>
 
                 <input type="radio" class="btn-check" name="fuel_type" id="btnNuclear" value="nuclear" autocomplete="off" {% if fuel_filter == 'nuclear' %}checked{% endif %}>
-                <input type="radio" class="btn-check" name="fuel_type" id="btnNuclear" autocomplete="off">
                 <label class="btn btn-outline-primary" for="btnNuclear">Nuclear</label>
             </div>
             <div class="ms-auto d-flex align-items-center">
@@ -127,4 +133,42 @@
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.querySelector('input[name="search"]');
+    const fuelFilterRadios = document.querySelectorAll('input[name="fuel_type"]');
+    const sortBySelect = document.getElementById('sortBySelect');
+
+    function applyFiltersAndReload() {
+        const selectedFuel = document.querySelector('input[name="fuel_type"]:checked').id.replace('btn', '');
+        const sortBy = sortBySelect.value;
+        const searchQuery = searchInput.value.trim();
+
+        // Create a URLSearchParams object to easily build the query string
+        const params = new URLSearchParams(window.location.search);
+        params.set('fuel', selectedFuel);
+        params.set('sort', sortBy);
+        if (searchQuery) {
+            params.set('search', searchQuery);
+        } else {
+            params.delete('search'); // Remove search param if empty
+        }
+
+        // Navigate to the new URL, which triggers a page reload with the new filters
+        window.location.search = params.toString();
+    }
+
+    // Add event listeners to the filter controls
+    fuelFilterRadios.forEach(radio => radio.addEventListener('change', applyFiltersAndReload));
+    sortBySelect.addEventListener('change', applyFiltersAndReload);
+
+    // Set the interval to reload the current page (with its filters) every 60 seconds
+    setInterval(() => {
+        location.reload();
+    }, 60000); // 60 seconds
+});
+</script>
 {% endblock %}
