@@ -33,30 +33,37 @@
 </div>
 <!-- Control Panel -->
 <div class="card shadow-sm mb-4">
-    <div class="card-body d-flex flex-wrap gap-3 align-items-center">
-        <div class="fw-bold me-2">Filter by Fuel Type:</div>
-        <div class="btn-group" role="group">
-            <input type="radio" class="btn-check" name="fuelType" id="btnAll" autocomplete="off" checked>
-            <label class="btn btn-outline-primary" for="btnAll">All</label>
+    <form method="GET" action="{% url 'plant_status_board' %}" class="card-header d-flex align-items-center">{% csrf_token %}
+        <div class="card-body d-flex flex-wrap gap-3 align-items-center">
+            <div class="input-group">
+                <input type="text" class="form-control form-control-sm" name="search" placeholder="Search by plant name..." value="{{ search_query }}">
+                <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-search"></i> Search</button>
+            </div>
+            <div class="fw-bold me-2">Filter by fuel type:</div>
+            <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="fuel_type" id="btnAll" value="all" autocomplete="off" {% if fuel_filter == 'all' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnAll">All</label>
 
-            <input type="radio" class="btn-check" name="fuelType" id="btnGas" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnGas">Gas (CCGT)</label>
+                <input type="radio" class="btn-check" name="fuel_type" id="btnGas" value="gas" autocomplete="off" {% if fuel_filter == 'gas' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnGas">Gas (CCGT)</label>
 
-            <input type="radio" class="btn-check" name="fuelType" id="btnWind" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnWind">Wind</label>
+                <input type="radio" class="btn-check" name="fuel_type" id="btnWind" value="wind" autocomplete="off" {% if fuel_filter == 'wind' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnWind">Wind</label>
 
-            <input type="radio" class="btn-check" name="fuelType" id="btnNuclear" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnNuclear">Nuclear</label>
+                <input type="radio" class="btn-check" name="fuel_type" id="btnNuclear" value="nuclear" autocomplete="off" {% if fuel_filter == 'nuclear' %}checked{% endif %}>
+                <input type="radio" class="btn-check" name="fuel_type" id="btnNuclear" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnNuclear">Nuclear</label>
+            </div>
+            <div class="ms-auto d-flex align-items-center">
+                <div class="fw-bold me-2">Sort by:</div>
+                <select id="sortBySelect" name="sort" class="form-select form-select-sm" style="width: auto;">
+                    <option value="mel" {% if sort_filter == 'mel' %}selected{% endif %}>Capacity (MEL)</option>
+                    <option value="name" {% if sort_filter == 'name' %}selected{% endif %}>Name</option>
+                    <option value="status" {% if sort_filter == 'status' %}selected{% endif %}>Status</option>
+                </select>
+            </div>
         </div>
-        <div class="ms-auto d-flex align-items-center">
-             <div class="fw-bold me-2">Sort by:</div>
-             <select class="form-select form-select-sm" style="width: auto;">
-                <option selected>Capacity (MEL)</option>
-                <option>Name</option>
-                <option>Status</option>
-            </select>
-        </div>
-    </div>
+    </form>
 </div>
 
 <!-- Legend Accordion -->

@@ -18,12 +18,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from viz import views
+from viz import views, views_plant_status, views_grid_analyser, views_system_headroom
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),  # Main index/hub page
-    path("analyser/", views.historical_analyser_view, name="historical_analyser"),
-    path("headroom/", views.system_headroom_view, name="system_headroom"),
-    path("status-board/", views.plant_status_board_view, name="plant_status_board"),
+    path(
+        "analyser/",
+        views_grid_analyser.historical_analyser_view,
+        name="historical_analyser",
+    ),
+    path(
+        "headroom/", views_system_headroom.system_headroom_view, name="system_headroom"
+    ),
+    path(
+        "status-board/",
+        views_plant_status.plant_status_board_view,
+        name="plant_status_board",
+    ),
 ]
