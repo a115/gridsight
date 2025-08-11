@@ -4,7 +4,33 @@
 
 {% block nav_title %}Live Plant Status Board{% endblock %}
 
+{% block extra_head %}
+<style>
+    @keyframes pulse-border {
+        0% { border-color: var(--bs-info); }
+        50% { border-color: var(--bs-info-bg-subtle); }
+        100% { border-color: var(--bs-info); }
+    }
+    .status-accepted-bid {
+        animation: pulse-border 2s infinite;
+    }
+    .offer-price {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--bs-info-text-emphasis);
+    }
+    .start-time {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+
 {% block content %}
+<div class="mb-4">
+    <p class="lead text-muted">This board provides a real-time view of every major power generation unit on the UK grid. Each tile represents a single plant, showing its planned output (FPN) versus its maximum capability (MEL) and its current operational status.</p>
+</div>
 <!-- Control Panel -->
 <div class="card shadow-sm mb-4">
     <div class="card-body d-flex flex-wrap gap-3 align-items-center">
@@ -33,6 +59,29 @@
     </div>
 </div>
 
+<!-- Legend Accordion -->
+<div class="accordion mb-4" id="legendAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLegend" aria-expanded="false" aria-controls="collapseLegend">
+                <i class="bi bi-info-circle-fill me-2"></i> How to Read This Board
+            </button>
+        </h2>
+        <div id="collapseLegend" class="accordion-collapse collapse" data-bs-parent="#legendAccordion">
+            <div class="accordion-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center"><span class="badge text-bg-primary me-3">Generating</span> The plant is online and generating electricity as planned.</li>
+                    <li class="list-group-item d-flex align-items-center"><span class="badge text-bg-success me-3">Standby</span> The plant is offline but available to be turned on by the grid operator (MEL > 0, FPN = 0).</li>
+                    <li class="list-group-item d-flex align-items-center"><span class="badge text-bg-warning me-3">Balancing</span> The plant has been instructed by the grid operator to generate more or less than planned.</li>
+                    <li class="list-group-item d-flex align-items-center"><span class="badge text-bg-info me-3">Accepted Bid</span> The plant is currently offline but has accepted a bid to start generating at a future time.</li>
+                    <li class="list-group-item d-flex align-items-center"><span class="badge text-bg-danger me-3">Trip</span> The plant has unexpectedly and suddenly gone offline.</li>
+                    <li class="list-group-item d-flex align-items-center"><span class="badge text-bg-secondary me-3">Outage</span> The plant is offline and unavailable, likely for planned maintenance (MEL = 0).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Plant Status Tiles -->
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-3">
     {% for plant in plants %}
@@ -45,6 +94,13 @@
                         {% if plant.icon %}<i class="bi {{ plant.icon }}"></i> {% endif %}{{ plant.status_text }}
                     </span>
                 </div>
+
+                {% if plant.status_text == 'Accepted Bid' %}
+                <div class="text-center my-2">
+                    <div class="offer-price">£{{ plant.offer_price }}</div>
+                    <div class="start-time">Starts at: {{ plant.start_time }}</div>
+                </div>
+                {% else %}
                 <div class="text-center my-2">
                     <span class="generation-value">
                         {{ plant.actual_gen }}
@@ -54,6 +110,8 @@
                     </span>
                     <span class="generation-plan">/ {{ plant.fpn }} MW</span>
                 </div>
+                {% endif %}
+
                 <div class="text-center text-muted">
                     <span class="mel-value">MEL: {{ plant.mel }} MW</span>
                 </div>

@@ -324,6 +324,20 @@ def plant_status_board_view(request):
             "mel": 595,
             "balancing_direction": None,
         },
+        # This next one represents a plant in the "Accepted Bid" state and requires new keys: offer_price and start_time
+        {
+            "name": "T_FFES-4",
+            "status_class": "status-accepted-bid",
+            "badge_class": "text-bg-info",
+            "status_text": "Accepted Bid",
+            "icon": "bi-hourglass-split",
+            "actual_gen": 0,
+            "fpn": 0,
+            "mel": 60,
+            "balancing_direction": None,
+            "offer_price": 115,
+            "start_time": "19:00",
+        },
     ]
     context = {"plants": plants_data}
     return render(request, "plant_status_board.html", context)
