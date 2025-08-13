@@ -1,9 +1,9 @@
 # GridSight
-A web-based intelligence tool for UK power traders. Visualises real-time grid status and automates historical volatility analysis to generate actionable insights.
+The energy transition is a multi-decade megatrend that guarantees one thing: increasing market complexity and volatility. The value in this new market will accrue to those who can navigate this complexity most effectively. 
+
+GridSight is a web-based intelligence tool for this new era, providing the speed of insight necessary to manage risk, identify opportunities, and trade with confidence.
 
 ## Project description
-
-The UK power market is defined by extreme volatility, driven by the interplay between intermittent renewables and thermal generation. 
 
 GridSight visualises public data and helps analyse historic and current scenarios in a way that can lead to forming better hypotheses and making more informed trading decisions.
 
@@ -38,7 +38,7 @@ This guide will walk you through setting up the GridSight project for local deve
     cd gridsight
     ```
 
-2.  **Create a virtual environment, activte it and install dependencies:**
+2.  **Create a virtual environment, activate it and install dependencies:**
     ```bash
     python -m venv .venv
     source .venv/bin/activate
