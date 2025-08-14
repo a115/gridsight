@@ -10,20 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import os
 from pathlib import Path
+from app.configuration.django import django_settings
+from app.configuration.postgres import postgres_settings
+from app.configuration.app import app_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = django_settings.secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
+DEBUG = django_settings.debug
 
 ALLOWED_HOSTS = [
     "gridsight.a115.co.uk",
@@ -96,11 +97,11 @@ WSGI_APPLICATION = "app.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "timescale.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "gridsight"),
-        "USER": os.environ.get("POSTGRES_USER", "nobody"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "NAME": postgres_settings.db,
+        "USER": postgres_settings.user,
+        "PASSWORD": postgres_settings.password,
+        "HOST": postgres_settings.host,
+        "PORT": postgres_settings.port,
     }
 }
 
@@ -150,4 +151,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # API Keys and other sensitive settings
-BMRS_API_KEY = os.environ.get("BMRS_API_KEY")
+BMRS_API_KEY = app_settings.bmrs_api_key
