@@ -48,10 +48,19 @@ This guide will walk you through setting up the GridSight project for local deve
 
 3.  **Configure your environment:**
     Create a `.env` file in the project root by copying the example file. This will store your database credentials and other secrets / env vars.
+
+    > Note: For now, the variables have to be exported when running a new process/opening a new terminal.
+
     ```
-    POSTGRES_PASSWORD=YOUR_PASSWORD
     DJANGO_SECRET_KEY=your-secret-key-here
     DJANGO_DEBUG=True
+
+    # Make sure this is aligned with the docker compose file
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=postgres
+    POSTGRES_DB=postgres
+    POSTGRES_HOST=localhost
+    POSTGRES_PORT=5433
     ```
 
 5.  **Run database migrations and collect static files:**
