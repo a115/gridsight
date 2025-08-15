@@ -3,7 +3,7 @@ from app.configuration.app import app_settings
 
 
 class Logfire:
-    def __init__(self, service_name = None):
+    def __init__(self, service_name=None):
         self.token = app_settings.logfire_token
         self.service_name = service_name or app_settings.app_name
         logfire.configure(token=self.token, service_name=self.service_name)

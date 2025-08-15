@@ -14,4 +14,5 @@ class PostgresSettings(BaseSettings):
         extra="ignore",
     )
 
+
 postgres_settings = PostgresSettings()

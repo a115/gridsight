@@ -11,4 +11,5 @@ class DjangoSettings(BaseSettings):
         extra="ignore",
     )
 
+
 django_settings = DjangoSettings()
