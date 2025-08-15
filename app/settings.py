@@ -154,6 +154,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # API Keys and other sensitive settings
 BMRS_API_KEY = app_settings.bmrs_api_key
 
+# Logfire configuration
+LOGFIRE_TOKEN = app_settings.logfire_token
+LOGFIRE_SERVICE_NAME = app_settings.app_name
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -167,6 +171,6 @@ LOGGING = {
     },
 }
 
-logfire.configure(token=app_settings.logfire_token, service_name=app_settings.app_name)
+logfire.configure(token=LOGFIRE_TOKEN, service_name=LOGFIRE_SERVICE_NAME)
 logfire.instrument_django()
 logfire.instrument_psycopg()
