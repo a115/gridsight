@@ -12,4 +12,4 @@ gunicorn
 whitenoise[brotli]
 pydantic
 pydantic-settings
-logfire
+logfire[django,psycopg,requests,celery]

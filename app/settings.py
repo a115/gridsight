@@ -174,3 +174,5 @@ LOGGING = {
 logfire.configure(token=LOGFIRE_TOKEN, service_name=LOGFIRE_SERVICE_NAME)
 logfire.instrument_django()
 logfire.instrument_psycopg()
+logfire.instrument_requests()
+logfire.instrument_celery()
