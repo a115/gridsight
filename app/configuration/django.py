@@ -6,6 +6,7 @@ class DjangoSettings(BaseSettings):
     debug: bool = False
 
     model_config = SettingsConfigDict(
+        env_file=".env",
         env_prefix="DJANGO_",
         extra="ignore",
     )

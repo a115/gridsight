@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import logfire
 from pathlib import Path
 from app.configuration.django import django_settings
 from app.configuration.postgres import postgres_settings
@@ -152,3 +153,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # API Keys and other sensitive settings
 BMRS_API_KEY = app_settings.bmrs_api_key
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "logfire": {
+            "class": "logfire.LogfireLoggingHandler",
+        },
+    },
+    "root": {
+        "handlers": ["logfire"],
+    },
+}
+
+logfire.configure(token=app_settings.logfire_token, service_name=app_settings.app_name)
+logfire.instrument_django()
+logfire.instrument_psycopg()

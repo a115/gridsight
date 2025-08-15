@@ -9,6 +9,7 @@ class PostgresSettings(BaseSettings):
     db: str
 
     model_config = SettingsConfigDict(
+        env_file=".env",
         env_prefix="POSTGRES_",
         extra="ignore",
     )
