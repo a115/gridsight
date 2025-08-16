@@ -6,4 +6,5 @@ class AppSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore")
 
+
 app_settings = AppSettings()
