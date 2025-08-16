@@ -56,6 +56,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy python dependencies from builder
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy project files and static files from builder
 COPY --from=builder /app .
