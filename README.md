@@ -50,6 +50,8 @@ This guide will walk you through setting up the GridSight project for local deve
     Create a `.env` file in the project root by copying the example file. This will store your database credentials and other secrets / env vars.
 
     ```
+    APP_NAME=gridsight
+    
     DJANGO_SECRET_KEY=your-secret-key-here
     DJANGO_DEBUG=True
 
@@ -62,6 +64,9 @@ This guide will walk you through setting up the GridSight project for local deve
 
     # Once you have a BMRS API key
     BMRS_API_KEY=your-cool-and-secret-bmrs-key
+
+    # Once you have a Logfire token
+    LOGFIRE_TOKEN=your-cool-and-secret-logfire-token
     ```
 
 5.  **Run database migrations and collect static files:**
