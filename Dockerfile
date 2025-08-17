@@ -13,6 +13,8 @@ ENV POSTGRES_USER="postgres"
 ENV POSTGRES_PASSWORD="dummy"
 ENV POSTGRES_DB="dummy"
 ENV BMRS_API_KEY="dummy"
+ENV APP_NAME="gridsight-build"
+ENV LOGFIRE_TOKEN="dummy"
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
