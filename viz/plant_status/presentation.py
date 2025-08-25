@@ -67,11 +67,11 @@ class PlantStatusCardResolver:
     ) -> BadgeClass:
         _badge_class_map = {
             StatusClass.GENERATING: BadgeClass.PRIMARY,
-            StatusClass.STANDBY: BadgeClass.SECONDARY,
-            StatusClass.ACCEPTED_BID: BadgeClass.SUCCESS,
-            StatusClass.BALANCING: BadgeClass.INFO,
+            StatusClass.STANDBY: BadgeClass.SUCCESS,
+            StatusClass.BALANCING: BadgeClass.WARNING,
+            StatusClass.ACCEPTED_BID: BadgeClass.INFO,
             StatusClass.TRIP: BadgeClass.DANGER,
-            StatusClass.OUTAGE: BadgeClass.DANGER,
+            StatusClass.OUTAGE: BadgeClass.SECONDARY,
         }
         return _badge_class_map.get(status_class, BadgeClass.WARNING)
 
