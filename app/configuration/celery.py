@@ -20,4 +20,5 @@ class CelerySettings(BaseSettings):
     def result_backend(self) -> str:
         return f"redis://{self.redis_user}:{self.redis_password}@{self.redis_host}:{self.redis_port}"
 
+
 celery_settings = CelerySettings()
