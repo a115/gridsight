@@ -117,6 +117,90 @@ class BMRSDataService:
 
         TimeSeriesData.objects.bulk_create(records_to_create, ignore_conflicts=True)
 
+    def get_latest_acceptances(self):
+        """
+        Fetches the latest 100 market-wide bid-offer acceptances (BOALF).
+        """
+        # This endpoint returns the latest 100 acceptances
+        acceptance_data = self._make_api_call(
+            endpoint="/balancing/acceptances/all/latest",
+            params={},
+            # The response is nested under a 'data' key
+            response_key="data",
+        )
+
+        if not acceptance_data:
+            return "No new acceptance data returned from API."
+
+        self._process_and_store_acceptance_data(acceptance_data)
+
+        return f"Successfully processed {len(acceptance_data)} acceptance records."
+
+    def _process_and_store_acceptance_data(self, acceptance_data: list):
+        """
+        Parses Bid-Offer Acceptance data and stores it as time-series records.
+        """
+        level_from_metric, _ = Metric.objects.get_or_create(
+            code="BOA-FROM",
+            defaults={"name": "Bid-Offer Acceptance From Level", "default_units": "MW"},
+        )
+        level_to_metric, _ = Metric.objects.get_or_create(
+            code="BOA-TO",
+            defaults={"name": "Bid-Offer Acceptance To Level", "default_units": "MW"},
+        )
+        volume_metric, _ = Metric.objects.get_or_create(
+            code="BOA-VOL",
+            defaults={"name": "Bid-Offer Acceptance Volume", "default_units": "MW"},
+        )
+
+        records_to_create = []
+
+        for item in acceptance_data:
+            bm_unit_id = item.get("nationalGridBmUnit")
+            if not bm_unit_id:
+                continue
+
+            plant, _ = Plant.objects.get_or_create(
+                eic_code=bm_unit_id, defaults={"name": bm_unit_id}
+            )
+
+            timestamp_str = item.get("acceptanceTime")
+            if not timestamp_str:
+                continue
+
+            # --- FIX: Remove the redundant timezone.make_aware() call ---
+            # The fromisoformat method already produces a timezone-aware datetime
+            # object because the string contains the UTC offset.
+            timestamp = timezone.datetime.fromisoformat(
+                timestamp_str.replace("Z", "+00:00")
+            )
+            # --- END FIX ---
+
+            level_from = item.get("levelFrom", 0)
+            level_to = item.get("levelTo", 0)
+            volume = level_to - level_from
+
+            records_to_create.append(
+                TimeSeriesData(
+                    time=timestamp,
+                    metric=level_from_metric,
+                    plant=plant,
+                    value=level_from,
+                )
+            )
+            records_to_create.append(
+                TimeSeriesData(
+                    time=timestamp, metric=level_to_metric, plant=plant, value=level_to
+                )
+            )
+            records_to_create.append(
+                TimeSeriesData(
+                    time=timestamp, metric=volume_metric, plant=plant, value=volume
+                )
+            )
+
+        TimeSeriesData.objects.bulk_create(records_to_create, ignore_conflicts=True)
+
     def update_plant_reference_data(self):
         """
         Fetches the master list of all BM Units and updates their fuel type
