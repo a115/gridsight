@@ -25,6 +25,11 @@ class Command(BaseCommand):
                 "Starting manual fetch of plant reference data (fuel types, etc.)..."
             )
             result = service.update_plant_reference_data()
+        elif source == "latest_acceptances":
+            self.stdout.write(
+                "Starting manual fetch of latest 100 BOALF acceptances..."
+            )
+            result = service.get_latest_acceptances()
         else:
             self.stdout.write(
                 self.style.ERROR(
