@@ -10,11 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import logfire
 from pathlib import Path
+
+import logfire
+
+from app.configuration.app import app_settings
 from app.configuration.django import django_settings
 from app.configuration.postgres import postgres_settings
-from app.configuration.app import app_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

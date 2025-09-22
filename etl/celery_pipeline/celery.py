@@ -1,6 +1,6 @@
 from celery import Celery
-from app.configuration.celery import celery_settings
 
+from app.configuration.celery import celery_settings
 
 etl_app = Celery(
     main="GridSight",

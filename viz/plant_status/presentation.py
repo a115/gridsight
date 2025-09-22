@@ -1,13 +1,14 @@
-from enum import StrEnum
-from pydantic import BaseModel
-from decimal import Decimal
 from datetime import datetime
-from etl.models import Plant
-from viz.plant_status.status import PlantStatusSolver
+from decimal import Decimal
+from enum import StrEnum
 
+from pydantic import BaseModel
+
+from etl.models import Plant
 from viz.plant_status.data_models import (
     BalancingDirection,
 )
+from viz.plant_status.status import PlantStatusSolver
 
 
 class Card(BaseModel): ...

@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from etl.models import Metric, Plant, TimeSeriesData
 
 

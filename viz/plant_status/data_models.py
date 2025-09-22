@@ -9,3 +9,4 @@ class FuelType(StrEnum):
 class BalancingDirection(StrEnum):
     UP = "up"
     DOWN = "down"
+    NONE = "none"

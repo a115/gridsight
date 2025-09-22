@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
+
 from django.shortcuts import render
+
+from etl.models import Plant
 from viz.plant_status.presentation import (
     PlantStatusCardResolver,
     PlantStatusViewContext,
 )
-from etl.models import Plant
 
 
 def plant_status_board_view(request):
@@ -17,7 +19,7 @@ def plant_status_board_view(request):
     sort_filter = request.GET.get("sort", "mel")
 
     # TODO: Implement filters
-    plants_data = Plant.objects.all()
+    plants_data = Plant.objects.all()[:10]
 
     plants_cards = [PlantStatusCardResolver.resolve(plant) for plant in plants_data]
 
