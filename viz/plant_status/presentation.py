@@ -47,7 +47,6 @@ class PlantStatusCard(Card):
     badge_class: BadgeClass
     status_text: StatusText
     icon: str | None
-    actual_gen: Decimal
     fpn: Decimal
     mel: Decimal
     balancing_direction: BalancingDirection | None
@@ -92,5 +91,4 @@ class PlantStatusCardResolver:
             fpn=plant_status.fpn,
             mel=plant_status.mel,
             balancing_direction=plant_status.balancing_direction,
-            actual_gen=plant_status.current_generation,
         )

@@ -2,6 +2,7 @@ import random
 from decimal import Decimal
 from enum import StrEnum
 from typing import Protocol
+from django.utils import timezone
 
 from pydantic import BaseModel
 
@@ -9,6 +10,7 @@ from etl.models import Plant, TimeSeriesData
 from viz.plant_status.data_models import (
     BalancingDirection,
 )
+from utils import get_start_and_end_of_settlement_period
 
 
 class PlantState(StrEnum):
@@ -25,7 +27,6 @@ class PlantStatus(BaseModel):
     name: str
     state: PlantState
     fpn: Decimal
-    current_generation: Decimal
     balancing_direction: BalancingDirection
 
 
@@ -45,12 +46,6 @@ class PlantStateRule(Protocol):
 
 
 class PlantStateSolver:
-    # TODO: Add these to interface
-    # business_rules: Sequence[
-    #     Callable[[PlantStateVariables], PlantState | None]
-    # ]
-    # default_state: PlantState
-
     def __init__(self):
         self.state_rules = [
             PlantStateSolver.check_for_trip_or_outage,
@@ -77,12 +72,11 @@ class PlantStateSolver:
     def check_if_generating_or_balancing(
         variables: PlantStateVariables,
     ) -> PlantState | None:
-        # 2. Check for active generation vs. balancing using the BOA volume
+        # 2. Check for active generation vs. balancing using the FPN and BOA volume
+        if variables.current_fpn > 0 and not variables.last_boa_volume:
+            return PlantState.GENERATING
         if variables.last_boa_volume:
-            if variables.last_boa_volume != 0:
-                return PlantState.BALANCING
-
-        return PlantState.GENERATING
+            return PlantState.BALANCING
 
     @staticmethod
     def check_if_accepted_bid_or_standby(
@@ -155,22 +149,28 @@ class PlantStatusSolver:
         return [Decimal(mel[0]), Decimal(mel[1])]
 
     @staticmethod
-    def last_bid_or_offer_acceptance_volume(
-        plant: Plant,
-    ) -> Decimal | None:
+    def boa_volume_for_current_settlement_period(plant: Plant) -> Decimal | None:
         """
+        Returns the BOA volume for the current settlement period for the given plant.
+
         The acceptance of a bid or offer is an event but the data is stored
         as a time-series record in this version.
         """
-        last_boa_volume = (
+        now = timezone.now()
+        start, end = get_start_and_end_of_settlement_period(now)
+
+        boa_volume = (
             TimeSeriesData.objects.filter(metric_id=5, plant=plant)
+            .filter(
+                time__range=(start, end)
+            )
             .order_by("-time")
             .values_list("value", flat=True)
             .first()
         )
 
-        if last_boa_volume:
-            return Decimal(last_boa_volume)
+        if boa_volume:
+            return Decimal(boa_volume)
 
     @staticmethod
     def resolve(
@@ -181,7 +181,7 @@ class PlantStatusSolver:
         previous_mel = last_two_mels[1]
 
         current_fpn = PlantStatusSolver.resolve_fpn(plant=plant)
-        last_boa_volume = PlantStatusSolver.last_bid_or_offer_acceptance_volume(
+        last_boa_volume = PlantStatusSolver.boa_volume_for_current_settlement_period(
             plant=plant
         )
         state = PlantStatusSolver.resolve_state(
@@ -196,12 +196,10 @@ class PlantStatusSolver:
             state=state,
             last_boa_volume=last_boa_volume,
         )
-        placeholder_generation = Decimal(random.randrange(0, 60))
         return PlantStatus(
             name=plant.name,
             state=state,
             fpn=current_fpn,
             mel=current_mel,
-            current_generation=placeholder_generation,
             balancing_direction=balancing_direction,
         )

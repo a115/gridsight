@@ -116,7 +116,6 @@
                 {% else %}
                 <div class="text-center my-2">
                     <span class="generation-value">
-                        {{ plant.actual_gen }}
                         {% if plant.balancing_direction == 'up' %}<i class="bi bi-arrow-up text-success"></i>
                         {% elif plant.balancing_direction == 'down' %}<i class="bi bi-arrow-down text-danger"></i>
                         {% endif %}
