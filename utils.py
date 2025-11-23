@@ -5,14 +5,17 @@ def get_settlement_period(datetime: datetime) -> int:
     # 2 settlement periods per hour, 1-indexed
     return (datetime.hour * 2) + (1 if datetime.minute >= 30 else 0) + 1
 
-def get_start_and_end_of_settlement_period(datetime: datetime) -> tuple[datetime, datetime]:
+
+def get_start_and_end_of_settlement_period(
+    datetime: datetime,
+) -> tuple[datetime, datetime]:
     """
     Returns the start and end timestamps for the settlement period containing the given datetime.
     Settlement periods are 30-minute blocks.
-    
+
     Args:
         datetime: A datetime object
-        
+
     Returns:
         A tuple of (start_datetime, end_datetime) for the settlement period
     """
@@ -23,8 +26,8 @@ def get_start_and_end_of_settlement_period(datetime: datetime) -> tuple[datetime
     else:
         start_minute = 30
         end_minute = 59
-    
+
     start = datetime.replace(minute=start_minute, second=0, microsecond=0)
     end = datetime.replace(minute=end_minute, second=59, microsecond=999999)
-    
+
     return start, end

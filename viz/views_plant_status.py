@@ -18,7 +18,7 @@ def plant_status_board_view(request):
     fuel_filter = request.GET.get("fuel_type", "all")
     sort_filter = request.GET.get("sort", "mel")
 
-    # TODO: Implement filters
+    # TODO: Implement pagination
     plants_data = Plant.objects.all()[:10]
 
     plants_cards = [PlantStatusCardResolver.resolve(plant) for plant in plants_data]

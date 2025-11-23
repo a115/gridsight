@@ -209,3 +209,6 @@ __marimo__/
 # Django stuff
 staticfiles/
 static/admin/
+
+# Mac stuff
+.DS_Store

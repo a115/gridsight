@@ -1,5 +1,6 @@
 import random
 from decimal import Decimal
+from datetime import datetime, UTC
 from enum import StrEnum
 from typing import Protocol
 from django.utils import timezone
@@ -7,10 +8,17 @@ from django.utils import timezone
 from pydantic import BaseModel
 
 from etl.models import Plant, TimeSeriesData
-from viz.plant_status.data_models import (
-    BalancingDirection,
-)
 from utils import get_start_and_end_of_settlement_period
+
+
+class FuelType(StrEnum):
+    COAL = "coal"
+    GAS = "gas"
+
+
+class BalancingDirection(StrEnum):
+    UP = "up"
+    DOWN = "down"
 
 
 class PlantState(StrEnum):
@@ -22,12 +30,49 @@ class PlantState(StrEnum):
     OUTAGE = "OUTAGE"
 
 
-class PlantStatus(BaseModel):
-    mel: Decimal
+class PlantStatus(BaseModel): ...
+
+
+class PlantCoreStatus(PlantStatus):
+    """
+    The core status of a `Plant` object. These attributes are always
+    defined regardless of the full status of the plant.
+    """
+
     name: str
     state: PlantState
+    mel: Decimal
     fpn: Decimal
+
+
+class PlantBalancingStatus(PlantStatus):
+    """
+    The components of the status that are defined only if the
+    plant is in `BALANCING` state.
+    """
+
     balancing_direction: BalancingDirection
+
+
+class PlantBidAcceptedStatus(PlantStatus):
+    """
+    The components of the status that are defined only if the
+    plant is in `ACCEPTED_BID` state.
+    """
+
+    offer_price: Decimal
+    start_time: datetime
+
+
+class PlantFullStatus(BaseModel):
+    """
+    A container class that allows segregating mutually exclusive
+    parts of the status.
+    """
+
+    core_status: PlantCoreStatus
+    balancing_status: PlantBalancingStatus | None = None
+    bid_accepted_status: PlantBidAcceptedStatus | None = None
 
 
 class PlantStateVariables(BaseModel):
@@ -115,13 +160,12 @@ class PlantStatusSolver:
     def resolve_balancing_direction(
         state: PlantState,
         last_boa_volume: Decimal | None,
-    ) -> BalancingDirection:
+    ) -> BalancingDirection | None:
         if state == PlantState.BALANCING:
             if last_boa_volume > 0:
                 return BalancingDirection.UP
             elif last_boa_volume < 0:
                 return BalancingDirection.DOWN
-        return BalancingDirection.NONE
 
     @staticmethod
     def resolve_fpn(
@@ -161,9 +205,7 @@ class PlantStatusSolver:
 
         boa_volume = (
             TimeSeriesData.objects.filter(metric_id=5, plant=plant)
-            .filter(
-                time__range=(start, end)
-            )
+            .filter(time__range=(start, end))
             .order_by("-time")
             .values_list("value", flat=True)
             .first()
@@ -175,7 +217,7 @@ class PlantStatusSolver:
     @staticmethod
     def resolve(
         plant: Plant,
-    ) -> PlantStatus:
+    ) -> PlantFullStatus:
         last_two_mels = PlantStatusSolver.last_two_mels(plant=plant)
         current_mel = last_two_mels[0]
         previous_mel = last_two_mels[1]
@@ -196,10 +238,30 @@ class PlantStatusSolver:
             state=state,
             last_boa_volume=last_boa_volume,
         )
-        return PlantStatus(
+
+        bid_accepted_status = None
+        if state == PlantState.ACCEPTED_BID:
+            # TODO: Implement me
+            bid_accepted_status = PlantBidAcceptedStatus(
+                offer_price=Decimal(100.5),
+                start_time=datetime.now(tz=UTC),
+            )
+
+        balancing_status = None
+        if balancing_direction:
+            balancing_status = PlantBalancingStatus(
+                balancing_direction=balancing_direction,
+            )
+
+        core_status = PlantCoreStatus(
             name=plant.name,
             state=state,
             fpn=current_fpn,
             mel=current_mel,
-            balancing_direction=balancing_direction,
+        )
+
+        return PlantFullStatus(
+            core_status=core_status,
+            balancing_status=balancing_status,
+            bid_accepted_status=bid_accepted_status,
         )
