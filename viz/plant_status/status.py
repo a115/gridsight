@@ -1,10 +1,10 @@
 import random
+from datetime import UTC, datetime
 from decimal import Decimal
-from datetime import datetime, UTC
 from enum import StrEnum
 from typing import Protocol
-from django.utils import timezone
 
+from django.utils import timezone
 from pydantic import BaseModel
 
 from etl.models import Plant, TimeSeriesData
@@ -161,10 +161,13 @@ class PlantStatusSolver:
         state: PlantState,
         last_boa_volume: Decimal | None,
     ) -> BalancingDirection | None:
+        if not last_boa_volume:
+            return
+
         if state == PlantState.BALANCING:
             if last_boa_volume > 0:
                 return BalancingDirection.UP
-            elif last_boa_volume < 0:
+            else:
                 return BalancingDirection.DOWN
 
     @staticmethod
@@ -254,7 +257,7 @@ class PlantStatusSolver:
             )
 
         core_status = PlantCoreStatus(
-            name=plant.name,
+            name=str(plant.name),
             state=state,
             fpn=current_fpn,
             mel=current_mel,
