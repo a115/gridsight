@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from etl.models import Metric, Plant, TimeSeriesData
+from utils import get_settlement_period
 
 
 class BMRSDataService:
@@ -34,7 +35,7 @@ class BMRSDataService:
         """
         now = timezone.now()
         settlement_date = now.strftime("%Y-%m-%d")
-        period = (now.hour * 2) + (1 if now.minute >= 30 else 0) + 1
+        period = get_settlement_period(now)
 
         mel_data = self._make_api_call(
             endpoint="/balancing/physical/all",

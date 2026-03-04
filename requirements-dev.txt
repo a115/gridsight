@@ -2,3 +2,4 @@ ipdb
 ruff
 pytest
 pytest-django
+pyright

@@ -13,9 +13,15 @@ services:
     image: redis:8.2
     ports:
       - 6379:6379
+  redis-insight:
+    image: redis/redisinsight:latest
+    restart: always
+    ports:
+      - "5540:5540"
     volumes:
-      - redis_data:/data
+      - redis-insight:/data
 
 volumes:
   postgres_data:
   redis_data:
+  redis-insight:

@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from viz import views, views_plant_status, views_grid_analyser, views_system_headroom
+from viz import views, views_grid_analyser, views_plant_status, views_system_headroom
 
 urlpatterns = [
     path("admin/", admin.site.urls),

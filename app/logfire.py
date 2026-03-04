@@ -1,4 +1,5 @@
 import logfire
+
 from app.configuration.app import app_settings
 
 

@@ -1,5 +1,6 @@
-from etl.celery_pipeline.celery import etl_app as app
 import logfire
+
+from etl.celery_pipeline.celery import etl_app as app
 
 
 @app.task(bind=True, ignore_result=True)
